@@ -5,6 +5,70 @@ _header.forEach((h) => {
   toggleContent(h);
 });
 
+// Decimal
+
+const _decimal = document.querySelectorAll(".decimal-buttons-grid > button");
+const _decimalGrid = document.querySelectorAll(".decimal-input-wrapper")[0];
+const _decimalEnter = document.querySelectorAll("#enterDecimalBtn")[0];
+
+const _decimalLetter = document.createElement("div");
+_decimalLetter.textContent = "-";
+_decimalLetter.style.fontSize = "32px";
+_decimalLetter.style.marginTop = "16px";
+_decimalLetter.style.marginBottom = "-4px";
+_decimalLetter.style.gridColumn = "2";
+_decimalLetter.style.gridRow = "2";
+_decimalLetter.style.alignSelf = "end";
+
+_decimalEnter.insertAdjacentElement("afterend", _decimalLetter);
+
+_decimalEnter.addEventListener("click", () => {
+  _decimalLetter.textContent = "-";
+});
+
+_decimal.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    let decimalInputString = "";
+    let allFieldsFilled = true;
+
+    for (let i = 0; i < decimalInputFields.length; i++) {
+      if (decimalInputFields[i].value === "") {
+        allFieldsFilled = false;
+        break;
+      }
+      let value = decimalInputFields[i].value;
+      if (value.length > 1 && value.startsWith("0")) {
+        value = parseInt(value, 10).toString();
+      }
+      decimalInputString += value;
+    }
+
+    if (allFieldsFilled) {
+      const originalDecimalValue = parseInt(decimalInputString, 10);
+
+      if (isNaN(originalDecimalValue) || originalDecimalValue < 1) {
+        _decimalLetter.textContent = "-";
+        return;
+      }
+
+      let letterEquivalent = "";
+
+      const effectiveValueForModulo = originalDecimalValue - 1;
+      const remainderForLetter = (effectiveValueForModulo % 26) + 1;
+
+      letterEquivalent = decimalMap[remainderForLetter.toString()] || "?";
+
+      if (originalDecimalValue > 26) {
+        _decimalLetter.textContent = `${remainderForLetter} \u00A0\u00A0 ${letterEquivalent}`;
+      } else {
+        _decimalLetter.textContent = `${letterEquivalent}`;
+      }
+    } else {
+      _decimalLetter.textContent = "-";
+    }
+  });
+});
+
 // Binary
 
 const _binary = document.querySelectorAll(".binary-buttons > button");
@@ -40,9 +104,9 @@ _binary.forEach((btn) => {
     if (allFieldsFull) {
       const outputLetter = binaryMap[binaryString] || "?";
       const decimalValue = parseInt(binaryString, 2);
-        _binaryLetter.textContent = `${decimalValue} \u00A0\u00A0 ${outputLetter}`;
+      _binaryLetter.textContent = `${decimalValue} \u00A0\u00A0 ${outputLetter}`;
     } else {
-        _binaryLetter.textContent = "-";
+      _binaryLetter.textContent = "-";
     }
   });
 });
@@ -86,6 +150,64 @@ _ternary.forEach((btn) => {
     } else {
       _ternaryLetter.textContent = "-";
     }
+  });
+});
+
+// Hexadecimal
+
+const _hexadecimal = document.querySelectorAll(
+  ".hexadecimal-buttons-grid > button"
+);
+const _hexadecimalGrid = document.querySelectorAll(
+  ".hexadecimal-input-wrapper"
+)[0];
+const _hexadecimalBack = document.querySelectorAll(
+  "#hexadecimalBackspaceBtn"
+)[0];
+const _hexadecimalEnter = document.querySelectorAll("#enterHexadecimalBtn")[0];
+const _hexadecimalFrame1 = document.querySelectorAll("#hexadecimalFrame1")[0];
+
+_hexadecimalFrame1.style.height = "265px";
+
+const _hexadecimalLetter = document.createElement("div");
+_hexadecimalLetter.textContent = "-";
+_hexadecimalLetter.style.fontSize = "32px";
+
+_hexadecimalGrid.insertAdjacentElement("afterend", _hexadecimalLetter);
+
+_hexadecimalEnter.addEventListener("click", () => {
+  _hexadecimalLetter.textContent = "-";
+});
+
+const showHexa = () => {
+  let hexString = "";
+  let allFieldsFilled = true;
+
+  for (let i = 0; i < hexadecimalInputFields.length; i++) {
+    if (hexadecimalInputFields[i].value === "") {
+      allFieldsFilled = false;
+      break;
+    }
+    hexString += hexadecimalInputFields[i].value.toUpperCase();
+  }
+
+  if (allFieldsFilled) {
+    const decimalValue = parseInt(hexString, 16);
+    const outputLetter = hexadecimalLetterMap[hexString] || "?";
+
+    _hexadecimalLetter.textContent = `${decimalValue} \u00A0\u00A0 ${outputLetter}`;
+  } else {
+    _hexadecimalLetter.textContent = "-";
+  }
+};
+
+_hexadecimalBack.addEventListener("click", () => {
+  showHexa();
+});
+
+_hexadecimal.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    showHexa();
   });
 });
 
